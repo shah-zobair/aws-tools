@@ -22,15 +22,15 @@ DESIRED_CAPACITY=0
 MIN_SIZE=$DESIRED_CAPACITY
 
 
-#aws --region=$AWS_REGION autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[?contains(Tags[?Key==\`Environment\`].Value, \`$ENVIRONMENT\`)].[AutoScalingGroupName]" | grep -v '\[\|\]' | sed s/' '//g > /tmp/$AWS_REGION\_$ENVIRONMENT\_ASG
 aws --region=$AWS_REGION autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[?contains(Tags[?Key==\`Environment\`].Value, \`$ENVIRONMENT\`)].[AutoScalingGroupName]" --output text > /tmp/$AWS_REGION\_$ENVIRONMENT\_ASG
 
 for ASG in `cat /tmp/$AWS_REGION\_$ENVIRONMENT\_ASG`; do
 
-echo "Scaling $ASG to $DESIRED_CAPACITY"
+ echo "Scaling $ASG to $DESIRED_CAPACITY"
 
-aws --region=$AWS_REGION autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG --min-size $MIN_SIZE --desired-capacity $DESIRED_CAPACITY 
-
-#aws --region=$AWS_REGION autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG --min-size $MIN_SIZE --max-size 3 --desired-capacity $DESIRED_CAPACITY
+ aws --region=$AWS_REGION autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG --min-size $MIN_SIZE --desired-capacity $DESIRED_CAPACITY 
 
 done
+
+echo ""
+echo "Scaled ASG names has been stored in /tmp/"$AWS_REGION"_"$ENVIRONMENT"_ASG"
