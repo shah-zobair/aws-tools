@@ -17,7 +17,7 @@
 #Please mention the desired state shutdown / poweron i.e: $./asg_scaling shutdown or $./asg_scaling poweron
 
 # Define your Auto Scaler Region. All ASG under this region will be set to 0 desired state.
-# Also define the environment so that only that specific environment's (Tag) will be affected.
+# Also define the environment so that only that specific environment's (Tagged) instances will be affected.
 AWS_REGION=us-east-1
 ENVIRONMENT=dev
 
