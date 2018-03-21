@@ -32,6 +32,7 @@ elif [ "$STATE" == "shutdown" ]; then
    aws --region=$AWS_REGION autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[?contains(Tags[?Key==\`Environment\`].Value, \`$ENVIRONMENT\`)].[AutoScalingGroupName]" --output text > /tmp/$AWS_REGION\_$ENVIRONMENT\_ASG
 
    for ASG in `cat /tmp/$AWS_REGION\_$ENVIRONMENT\_ASG`; do
+      aws --region=$AWS_REGION autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG --min-size 0
       aws --region=$AWS_REGION autoscaling describe-auto-scaling-groups --auto-scaling-group-name $ASG --output text | grep INSTANCES | cut -f4 > /tmp/$AWS_REGION\_$ENVIRONMENT\_$ASG\_INSTANCES
       for INSTANCE in `cat /tmp/$AWS_REGION\_$ENVIRONMENT\_$ASG\_INSTANCES`; do
          echo "Standby Instance: $INSTANCE from ASG: $ASG"
