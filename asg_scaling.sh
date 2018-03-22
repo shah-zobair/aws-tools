@@ -53,10 +53,15 @@ elif [ "$STATE" == "poweron" ]; then
    echo "Powering On all Instances in Region '$AWS_REGION' and Environment '$ENVIRONMENT'"
    for ASG in `cat /tmp/$AWS_REGION\_$ENVIRONMENT\_ASG`; do
       for INSTANCE in `cat /tmp/$AWS_REGION\_$ENVIRONMENT\_$ASG\_INSTANCES`; do
+         MAX=`cat /tmp/$AWS_REGION\_$ENVIRONMENT\_$ASG\_INSTANCES | wc -l`
+         echo "Set $ASG to MAX SIZE of $MAX"
+         aws --region=$AWS_REGION autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG --max-size $MAX
+
          echo "Power On $INSTANCE for $ASG"
          aws --region=$AWS_REGION ec2 start-instances --instance-ids $INSTANCE
          echo "Waiting for 3 seconds..."
          sleep 3
+
          echo "Adding back the Instance: $INSTANCE to ASG: $ASG"
          aws --region=$AWS_REGION autoscaling exit-standby --instance-ids $INSTANCE --auto-scaling-group-name $ASG
       done
